@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _destination;
     private float Run_Wait_Ratio = 0.0f;
     private Constant.State CharecterState = Constant.State.Idle;
+    private bool Jumping = false;
     private void Move()
     {
         Vector3 MoveVector = _destination - transform.position;
@@ -43,16 +44,21 @@ public class PlayerController : MonoBehaviour
         Movement.SetFloat("Run_Wait_Ratio", Run_Wait_Ratio);
         Movement.Play("Run_Wait");
     }
-    private void Jump()
+    private void Jump() 
     {
-        if(CharecterState == Constant.State.Idle)
+        if (CharecterState == Constant.State.Idle)
         {
-
+            Animator Movement = GetComponent<Animator>();
+            Movement.Play("Jump");
         }
         if (CharecterState == Constant.State.Move)
         {
-
+            CharecterState = Constant.State.Idle;
+            Animator Movement = GetComponent<Animator>();
+            Movement.Play("Jump");
+            CharecterState = Constant.State.Move;
         }
+        Jumping = false;
     }
     private void OnMouseClick(Constant.MouseEvent evt)
     {
@@ -76,6 +82,14 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.I))
         {
             PopupController.PopupOnOff();
+        }
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (Jumping == false)
+            {
+                Jumping = true;
+                Jump();
+            }
         }
     }
     // Start is called before the first frame update
